@@ -7,7 +7,8 @@ class Hand {
   float accel;
   String hand;
   
-  Hand(int obX){
+  Hand(){
+    obX = -1000;
     handWidth = 108;
     handHeight = 64;
     accel = random(1.01, 1.05);
