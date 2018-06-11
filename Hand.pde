@@ -5,6 +5,7 @@ class Hand {
   float handWidth;
   float handHeight;
   float accel;
+  String hand;
   
   Hand(int obX){
     handWidth = 108;
@@ -12,14 +13,17 @@ class Hand {
     accel = random(1.01, 1.05);
   }
   
-  void run(){
-    display();
-    punch();
-  }
+//  void run(){
+//    display();
+//    punch();
+//  }
   
-  void display(){
-    rect(obX, obY, handWidth, handHeight);
-    fill(255, 255, 255);
+  void display(String hand){
+    if ( hand == "right" ) {
+      image(punch_right, obX, obY, handWidth, handHeight);
+    } else {
+      image(punch_left, obX, obY, handWidth, handHeight);
+    }
   }
   
   void punch(){
