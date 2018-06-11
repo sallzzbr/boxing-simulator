@@ -1,4 +1,4 @@
-class RightHand {
+class Hand {
   
   float obY;
   float obX;
@@ -6,10 +6,7 @@ class RightHand {
   float handHeight;
   float accel;
   
-  RightHand() {
-    //tempX e tempY é para na hora de implementar conseguir usar o random
-    obX = int(random(54, 586));
-    obY = int(random(32, 448));
+  Hand(int obX){
     handWidth = 108;
     handHeight = 64;
     accel = random(1.01, 1.05);
@@ -28,6 +25,16 @@ class RightHand {
   void punch(){
     handWidth = handWidth * accel;
     handHeight = handHeight * accel;
+  }
+  
+  void randomize(int tempObX, int tempObY){
+    if(handWidth >= 324){
+      obX = tempObX;
+      obY = tempObY;
+      handWidth = 108;
+      handHeight = 64;
+      accel = random(1.01, 1.05);
+    }
   }
   
 }
