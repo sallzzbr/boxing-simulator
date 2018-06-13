@@ -9,8 +9,8 @@ class Hand {
   
   Hand(){
     obX = -1000;
-    handWidth = 108;
-    handHeight = 64;
+    handWidth = 54;
+    handHeight = 32;
     accel = random(1.01, 1.05);
   }
   
@@ -33,11 +33,11 @@ class Hand {
   }
   
   void randomize(int tempObX, int tempObY){
-    if(handWidth >= 324){
+    if(handWidth >= 216){
       obX = tempObX;
       obY = tempObY;
-      handWidth = 108;
-      handHeight = 64;
+      handWidth = 54;
+      handHeight = 32;
       accel = random(1.01, 1.05);
     }
   }
