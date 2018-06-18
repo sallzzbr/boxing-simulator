@@ -42,4 +42,11 @@ class Hand {
     }
   }
   
+  void restart(int tempObX, int tempObY){
+      obX = tempObX;
+      obY = tempObY;
+      handWidth = 54;
+      handHeight = 32;
+  }
+  
 }

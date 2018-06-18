@@ -4,6 +4,12 @@ Hand rightPunch;
 Hand leftPunch;
 PImage punch_right;
 PImage punch_left;
+int points; 
+PFont americanFont;
+float maoEsqX;
+float maoDirX;
+float maoEsqY;
+float maoDirY;
 
 SimpleOpenNI context;
 color[] userClr = new color[] {  
@@ -18,9 +24,11 @@ PVector com2d = new PVector();
 
 void setup(){
   size(640, 360);
+  americanFont = loadFont("AmericanTypewriter-CondensedLight-100.vlw");
   context = new SimpleOpenNI(this);
   ellipseMode(CENTER);
   rectMode(CENTER);
+  imageMode(CENTER);
   punch_right = loadImage("Rpunch.png");
   punch_left = loadImage("Lpunch.png");
   rightPunch = new Hand();
@@ -41,6 +49,10 @@ void setup(){
 void draw(){
   context.update();
   background(0, 0, 0);
+  textFont(americanFont);
+  textSize(14);
+  textAlign(CENTER);
+  text("Pontos: " + points, 40,20);
   //image(context.depthImage(),0,0);
   //image(context.userImage(), 0, 0);
   rightPunch.display("left");
@@ -56,24 +68,39 @@ void draw(){
       drawSkeleton(userList[i]);
     }
   }
+  collision();
 }
 
 void drawSkeleton(int userId) {
   // aqui é definido qual parte do corpo vai rastrear
   PVector rightHand = new PVector();
   context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, rightHand);
-  PVector convertedHead = new PVector();
-  context.convertRealWorldToProjective(rightHand, convertedHead);
+  PVector convertedRightH = new PVector();
+  context.convertRealWorldToProjective(rightHand, convertedRightH);
   //desenhar uma elipse sobre a parte do corpo rastreada
   fill(0, 255, 0);
-  ellipse(convertedHead.x, convertedHead.y, 60, 60);
+  ellipse(convertedRightH.x, convertedRightH.y, 60, 60);
   //
   PVector leftHand = new PVector();
   context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, leftHand);
-  context.convertRealWorldToProjective(leftHand, convertedHead);
+  PVector convertedLeftH = new PVector();
+  context.convertRealWorldToProjective(leftHand, convertedLeftH);
   //desenhar uma elipse sobre a parte do corpo rastreada
   fill(0, 255, 0);
-  ellipse(convertedHead.x, convertedHead.y, 60, 60);   
+  ellipse(convertedLeftH.x, convertedLeftH.y, 60, 60); 
+  maoEsqX = convertedLeftH.x;
+ // maoDirX = convertedRightH.x;
+  maoEsqY = convertedLeftH.y;
+ // maoDirY = convertedRightH.y;
+  println("mao", maoEsqX);
+  println("soco", leftPunch.obX);
+}
+
+void collision() {
+  if(maoEsqX >= (leftPunch.obX - 45) && maoEsqX <=  (leftPunch.obX + 45) && maoEsqY >= (leftPunch.obY - 16) && maoEsqY <= (leftPunch.obY + 16)){
+    points = points + 1;
+    leftPunch.restart(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
+  }
 }
 
 // -----------------------------------------------------------------
