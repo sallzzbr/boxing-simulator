@@ -10,6 +10,7 @@ float maoEsqX;
 float maoDirX;
 float maoEsqY;
 float maoDirY;
+boolean gameStart = false;
 
 SimpleOpenNI context;
 color[] userClr = new color[] {  
@@ -50,8 +51,22 @@ void draw(){
   context.update();
   background(0, 0, 0);
   textFont(americanFont);
-  textSize(14);
   textAlign(CENTER);
+  pressStart();
+  if (gameStart){
+    startGame();
+  }
+  int[] userList = context.getUsers();
+  for (int i=0; i<userList.length; i++) {
+    if (context.isTrackingSkeleton(userList[i])) {
+      stroke(userClr[ (userList[i] - 1) % userClr.length ] );
+      drawSkeleton(userList[i]);
+    }
+  }
+}
+
+void startGame(){
+  textSize(14);
   text("Pontos: " + points, 40,20);
   //image(context.depthImage(),0,0);
   //image(context.userImage(), 0, 0);
@@ -61,14 +76,21 @@ void draw(){
   leftPunch.display("right");
   leftPunch.punch();
   leftPunch.randomize(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
-  int[] userList = context.getUsers();
-  for (int i=0; i<userList.length; i++) {
-    if (context.isTrackingSkeleton(userList[i])) {
-      stroke(userClr[ (userList[i] - 1) % userClr.length ] );
-      drawSkeleton(userList[i]);
-    }
-  }
   collision();
+}
+
+void pressStart() {
+  textSize(28);
+  text("TOUCH HERE TO START", 320, 180);
+  if(maoEsqX >= (220) && maoEsqX <=  (420) && maoEsqY >= (140) && maoEsqY <= (220)){
+    background(0);
+    gameStart = true;
+  }
+  if(maoDirX >= (220) && maoDirX <=  (420) && maoDirY >= (140) && maoDirY <= (220)){
+    background(0);
+    gameStart = true;
+  }
+  
 }
 
 void drawSkeleton(int userId) {
@@ -89,17 +111,31 @@ void drawSkeleton(int userId) {
   fill(0, 255, 0);
   ellipse(convertedLeftH.x, convertedLeftH.y, 60, 60); 
   maoEsqX = convertedLeftH.x;
- // maoDirX = convertedRightH.x;
+  maoDirX = convertedRightH.x;
   maoEsqY = convertedLeftH.y;
- // maoDirY = convertedRightH.y;
+  maoDirY = convertedRightH.y;
   println("mao", maoEsqX);
   println("soco", leftPunch.obX);
 }
 
-void collision() {
+void collision() {  
+ //mao esquerda
   if(maoEsqX >= (leftPunch.obX - 45) && maoEsqX <=  (leftPunch.obX + 45) && maoEsqY >= (leftPunch.obY - 16) && maoEsqY <= (leftPunch.obY + 16)){
     points = points + 1;
     leftPunch.restart(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
+  }
+  if(maoEsqX >= (rightPunch.obX - 45) && maoEsqX <=  (rightPunch.obX + 45) && maoEsqY >= (rightPunch.obY - 16) && maoEsqY <= (rightPunch.obY + 16)){
+    points = points + 1;
+    rightPunch.restart(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
+  }
+  //mao direita
+  if(maoDirX >= (leftPunch.obX - 45) && maoDirX <=  (leftPunch.obX + 45) && maoDirY >= (leftPunch.obY - 16) && maoDirY <= (leftPunch.obY + 16)){
+    points = points + 1;
+    leftPunch.restart(int(random((width/2 + 54), (width - 100))), int(random(32, (height - 32))));
+  }
+  if(maoDirX >= (rightPunch.obX - 45) && maoDirX <=  (rightPunch.obX + 45) && maoDirY >= (rightPunch.obY - 16) && maoDirY <= (rightPunch.obY + 16)){
+    points = points + 1;
+    rightPunch.restart(int(random((width/2 + 54), (width - 100))), int(random(32, (height - 32))));
   }
 }
 
@@ -123,4 +159,6 @@ void onVisibleUser(SimpleOpenNI curContext, int userId)
 {
   //println("onVisibleUser - userId: " + userId);
 }
+
+  
 
