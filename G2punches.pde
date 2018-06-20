@@ -52,9 +52,10 @@ void draw(){
   background(0, 0, 0);
   textFont(americanFont);
   textAlign(CENTER);
-  pressStart();
   if (gameStart){
     startGame();
+  } else {
+    pressStart();
   }
   int[] userList = context.getUsers();
   for (int i=0; i<userList.length; i++) {
@@ -66,8 +67,14 @@ void draw(){
 }
 
 void startGame(){
+  fill(255);
   textSize(14);
   text("Pontos: " + points, 40,20);
+  if(rightPunch.strikes + leftPunch.strikes < 0){
+    text("Hits: 0", 30,40);
+  } else {
+    text("Hits: " + (rightPunch.strikes + leftPunch.strikes), 30,40);
+  }
   //image(context.depthImage(),0,0);
   //image(context.userImage(), 0, 0);
   rightPunch.display("left");
@@ -80,13 +87,16 @@ void startGame(){
 }
 
 void pressStart() {
-  textSize(28);
+  textSize(20);
+  fill(255);
+  rect(320, 175, 260, 40);
+  fill(0);
   text("TOUCH HERE TO START", 320, 180);
-  if(maoEsqX >= (220) && maoEsqX <=  (420) && maoEsqY >= (140) && maoEsqY <= (220)){
+  if(maoEsqX >= (190) && maoEsqX <=  (450) && maoEsqY >= (160) && maoEsqY <= (200)){
     background(0);
     gameStart = true;
   }
-  if(maoDirX >= (220) && maoDirX <=  (420) && maoDirY >= (140) && maoDirY <= (220)){
+  if(maoDirX >= (190) && maoDirX <=  (450) && maoDirY >= (160) && maoDirY <= (200)){
     background(0);
     gameStart = true;
   }

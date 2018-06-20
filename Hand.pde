@@ -6,12 +6,14 @@ class Hand {
   float handHeight;
   float accel;
   String hand;
+  int strikes;
   
   Hand(){
     obX = -1000;
     handWidth = 54;
     handHeight = 32;
     accel = random(1.01, 1.05);
+    strikes = -1;
   }
   
 //  void run(){
@@ -38,7 +40,8 @@ class Hand {
       obY = tempObY;
       handWidth = 54;
       handHeight = 32;
-      accel = random(1.01, 1.05);
+      accel = random(1.01, 1.10);
+      strikes = strikes + 1;
     }
   }
   
