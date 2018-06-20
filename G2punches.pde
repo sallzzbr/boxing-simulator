@@ -10,6 +10,8 @@ float maoEsqX;
 float maoDirX;
 float maoEsqY;
 float maoDirY;
+boolean gameStart = false;
+boolean ko = false;
 
 SimpleOpenNI context;
 color[] userClr = new color[] {  
@@ -50,9 +52,35 @@ void draw(){
   context.update();
   background(0, 0, 0);
   textFont(americanFont);
-  textSize(14);
   textAlign(CENTER);
+  if (gameStart){
+    startGame();
+  } else {
+    pressStart();
+  }
+  int[] userList = context.getUsers();
+  for (int i=0; i<userList.length; i++) {
+    if (context.isTrackingSkeleton(userList[i])) {
+      stroke(userClr[ (userList[i] - 1) % userClr.length ] );
+      drawSkeleton(userList[i]);
+    }
+  }
+  if(ko){
+    gameStart = false;
+    pressStart();
+    gameOver();
+  }
+}
+
+void startGame(){
+  fill(255);
+  textSize(14);
   text("Pontos: " + points, 40,20);
+  if(rightPunch.strikes + leftPunch.strikes < 0){
+    text("Hits: 0", 35,40);
+  } else {
+    text("Hits: " + (rightPunch.strikes + leftPunch.strikes), 35,40);
+  }
   //image(context.depthImage(),0,0);
   //image(context.userImage(), 0, 0);
   rightPunch.display("left");
@@ -61,14 +89,32 @@ void draw(){
   leftPunch.display("right");
   leftPunch.punch();
   leftPunch.randomize(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
-  int[] userList = context.getUsers();
-  for (int i=0; i<userList.length; i++) {
-    if (context.isTrackingSkeleton(userList[i])) {
-      stroke(userClr[ (userList[i] - 1) % userClr.length ] );
-      drawSkeleton(userList[i]);
-    }
-  }
   collision();
+  if(rightPunch.strikes + leftPunch.strikes == 10){
+    ko = true;
+  }
+}
+
+void pressStart() {
+  textSize(20);
+  fill(255);
+  rect(320, 175, 260, 40);
+  fill(0);
+  text("TOUCH HERE TO START", 320, 180);
+  if(maoEsqX >= (190) && maoEsqX <=  (450) && maoEsqY >= (160) && maoEsqY <= (200)){
+    background(0);
+    gameStart = true;
+  }
+  if(maoDirX >= (190) && maoDirX <=  (450) && maoDirY >= (160) && maoDirY <= (200)){
+    background(0);
+    gameStart = true;
+  }
+}
+
+void gameOver() {
+  fill(255);
+  text("K.O.", 320, 100);
+  text("TRY AGAIN!", 320, 260);
 }
 
 void drawSkeleton(int userId) {
@@ -89,17 +135,31 @@ void drawSkeleton(int userId) {
   fill(0, 255, 0);
   ellipse(convertedLeftH.x, convertedLeftH.y, 60, 60); 
   maoEsqX = convertedLeftH.x;
- // maoDirX = convertedRightH.x;
+  maoDirX = convertedRightH.x;
   maoEsqY = convertedLeftH.y;
- // maoDirY = convertedRightH.y;
+  maoDirY = convertedRightH.y;
   println("mao", maoEsqX);
   println("soco", leftPunch.obX);
 }
 
-void collision() {
+void collision() {  
+ //mao esquerda
   if(maoEsqX >= (leftPunch.obX - 45) && maoEsqX <=  (leftPunch.obX + 45) && maoEsqY >= (leftPunch.obY - 16) && maoEsqY <= (leftPunch.obY + 16)){
     points = points + 1;
     leftPunch.restart(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
+  }
+  if(maoEsqX >= (rightPunch.obX - 45) && maoEsqX <=  (rightPunch.obX + 45) && maoEsqY >= (rightPunch.obY - 16) && maoEsqY <= (rightPunch.obY + 16)){
+    points = points + 1;
+    rightPunch.restart(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
+  }
+  //mao direita
+  if(maoDirX >= (leftPunch.obX - 45) && maoDirX <=  (leftPunch.obX + 45) && maoDirY >= (leftPunch.obY - 16) && maoDirY <= (leftPunch.obY + 16)){
+    points = points + 1;
+    leftPunch.restart(int(random((width/2 + 54), (width - 100))), int(random(32, (height - 32))));
+  }
+  if(maoDirX >= (rightPunch.obX - 45) && maoDirX <=  (rightPunch.obX + 45) && maoDirY >= (rightPunch.obY - 16) && maoDirY <= (rightPunch.obY + 16)){
+    points = points + 1;
+    rightPunch.restart(int(random((width/2 + 54), (width - 100))), int(random(32, (height - 32))));
   }
 }
 
@@ -123,4 +183,6 @@ void onVisibleUser(SimpleOpenNI curContext, int userId)
 {
   //println("onVisibleUser - userId: " + userId);
 }
+
+  
 
