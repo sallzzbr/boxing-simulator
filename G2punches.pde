@@ -11,6 +11,7 @@ float maoDirX;
 float maoEsqY;
 float maoDirY;
 boolean gameStart = false;
+boolean ko = false;
 
 SimpleOpenNI context;
 color[] userClr = new color[] {  
@@ -64,6 +65,11 @@ void draw(){
       drawSkeleton(userList[i]);
     }
   }
+  if(ko){
+    gameStart = false;
+    pressStart();
+    gameOver();
+  }
 }
 
 void startGame(){
@@ -71,9 +77,9 @@ void startGame(){
   textSize(14);
   text("Pontos: " + points, 40,20);
   if(rightPunch.strikes + leftPunch.strikes < 0){
-    text("Hits: 0", 30,40);
+    text("Hits: 0", 35,40);
   } else {
-    text("Hits: " + (rightPunch.strikes + leftPunch.strikes), 30,40);
+    text("Hits: " + (rightPunch.strikes + leftPunch.strikes), 35,40);
   }
   //image(context.depthImage(),0,0);
   //image(context.userImage(), 0, 0);
@@ -84,6 +90,9 @@ void startGame(){
   leftPunch.punch();
   leftPunch.randomize(int(random(54, (width/2 - 108))), int(random(32, (height - 32))));
   collision();
+  if(rightPunch.strikes + leftPunch.strikes == 10){
+    ko = true;
+  }
 }
 
 void pressStart() {
@@ -100,7 +109,12 @@ void pressStart() {
     background(0);
     gameStart = true;
   }
-  
+}
+
+void gameOver() {
+  fill(255);
+  text("K.O.", 320, 100);
+  text("TRY AGAIN!", 320, 260);
 }
 
 void drawSkeleton(int userId) {
